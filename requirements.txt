@@ -3,6 +3,3 @@ numpy
 opencv-python
 streamlit
 streamlit_drawable_canvas
-torch.nn
-torch.optim
-
