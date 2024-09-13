@@ -1,9 +1,9 @@
 import os
 import torch
-import torch.nn as nn
+# import torch.nn as nn
 import numpy as np
 import cv2
-from PIL import Image
+# from PIL import Image
 import streamlit as st
 from streamlit_drawable_canvas import st_canvas
 

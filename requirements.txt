@@ -1,0 +1,6 @@
+os
+torch
+numpy
+cv2
+streamlit
+streamlit_drawable_canvas
