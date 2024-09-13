@@ -1,4 +1,3 @@
-import os
 import torch
 # import torch.nn as nn
 import numpy as np
@@ -78,11 +77,6 @@ def main():
     st.sidebar.header("Model Configuration")
     model_path = st.sidebar.text_input("Model Path", "best_model.pth")
     mode = st.sidebar.selectbox("Mode", ["Predict", "Train"])
-
-    # Check if the model file exists
-    if not os.path.exists(model_path):
-        st.sidebar.error(f"Model file not found at `{model_path}`. Please provide a valid path.")
-        st.stop()
 
     # Device configuration
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
