@@ -1,14 +1,9 @@
+import streamlit as st
 import torch
-# import torch.nn as nn
+import torch.nn as nn
 import numpy as np
 import cv2
-# from PIL import Image
-import streamlit as st
 from streamlit_drawable_canvas import st_canvas
-
-
-import torch.nn as nn
-
 import torch.optim as optim
 
 def train_model(model, images, labels, device, epochs=5, lr=0.01):
@@ -41,7 +36,6 @@ class LogisticRegressionModel(nn.Module):
         x = x.view(-1, 28 * 28)
         return self.fc(x)  # Use 'fc' to match the saved model
 
-# Function to load the model
 @st.cache(allow_output_mutation=True)
 def load_model(model_path, device):
     model = LogisticRegressionModel().to(device)
@@ -49,28 +43,19 @@ def load_model(model_path, device):
     model.eval()
     return model
 
-
 def preprocess_image(image):
-    """
-    Preprocess the image to match the input requirements of the model.
-    """
-    # Convert to grayscale
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # Resize to 28x28
     image = cv2.resize(image, (28, 28), interpolation=cv2.INTER_AREA)
-    # Invert colors: Canvas is white on black, MNIST is black on white
     image = cv2.bitwise_not(image)
-    # Normalize to [0,1]
     image = image / 255.0
-    # Add channel and batch dimensions
     image = image.reshape(1, 1, 28, 28)
-    # Convert to tensor
     image = torch.tensor(image, dtype=torch.float32)
     return image
 
-
 def main():
     st.title('Digit Recognizer')
+    st.image("logo.gif")
+
     st.markdown('Draw a digit in the box below and click **Predict** to see the result.')
 
     # Sidebar for model path and mode selection
@@ -98,9 +83,7 @@ def main():
     )
 
     if canvas_result.image_data is not None:
-        # Convert the image to uint8
         img = canvas_result.image_data.astype('uint8')
-        # Display the image on the app
         st.image(img, caption='Your Drawing', use_column_width=True)
 
     if mode == "Predict":
@@ -108,17 +91,14 @@ def main():
             if canvas_result.image_data is None:
                 st.warning("Please draw a digit before predicting.")
             else:
-                # Preprocess the image
                 processed_image = preprocess_image(img)
                 processed_image = processed_image.to(device)
 
-                # Make prediction
                 with torch.no_grad():
                     outputs = model(processed_image)
                     probabilities = nn.functional.softmax(outputs, dim=1).cpu().numpy()[0]
                     predicted_digit = np.argmax(probabilities)
 
-                # Display the result
                 st.write(f'### Predicted Digit: {predicted_digit}')
                 st.bar_chart(probabilities)
     elif mode == "Train":
@@ -130,6 +110,13 @@ def main():
                 train_model(model, [img], [label], device)
                 torch.save(model.state_dict(), model_path)
                 st.success("Model trained and saved successfully.")
+
+    # Add profile image with clickable links
+    st.sidebar.image("profile.jpeg", caption="Guryuvraj Singh", width=100)
+    if st.sidebar.button('GitHub'):
+        st.sidebar.markdown("[Go to GitHub](https://github.com/guryuvraj)")
+    if st.sidebar.button('Instagram'):
+        st.sidebar.markdown("[Go to Instagram](https://instagram.com)")
 
 if __name__ == "__main__":
     main()
